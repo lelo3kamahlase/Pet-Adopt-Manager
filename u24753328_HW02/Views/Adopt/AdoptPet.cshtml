@@ -1,0 +1,94 @@
+﻿@model u24753328_HW02.Models.PET
+
+@{
+    ViewBag.Title = "Adopt " + Model.Name;
+}
+
+<div class="container py-5">
+    <div class="row">
+      
+        <div class="col-md-6">
+            <h1 class="display-4 text-warning">Hi, I'm @Model.Name!</h1>
+            <h2 class="lead mb-4">I'm looking for my dream home!</h2>
+
+            <p class="small text-muted mb-4">
+                <i class="bi bi-geo-alt-fill"></i> @Model.Location &bull;
+                <i class="bi bi-clock-fill"></i> Age @Model.Age &bull;
+                <i class="bi bi-weight"></i> @Model.Weight kg &bull;
+                <i class="bi bi-gender-@Model.Gender.ToLower()"></i> @Model.Gender
+            </p>
+
+            <h4 class="text-primary mt-4">My Story</h4>
+            <p class="border p-3 bg-light rounded">
+                @Model.Story
+            </p>
+        </div>
+
+  
+        <div class="col-md-6">
+            <img src="@Model.ImagePath" alt="Picture of @Model.Name" class="img-fluid rounded shadow-lg mb-4" />
+
+            <h4 class="text-primary mt-4">Your Details</h4>
+
+            @using (Html.BeginForm("AdoptNow", "Adopt", FormMethod.Post, new { @class = "p-3 border rounded shadow-sm bg-light" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @Html.Hidden("PetID", Model.PetID)
+                <div class="mb-3">
+                    <label for="FullNameDropdown" class="form-label">Full Name</label>
+                    @Html.DropDownList("FullName", (SelectList)ViewBag.FullNameList, "-- Select Your Name --",
+                                            new { @class = "form-select", id = "FullNameDropdown", required = "required" })
+                    @Html.ValidationMessage("FullName", "", new { @class = "text-danger" })
+                </div>
+                <div class="mb-3">
+                    <label for="PhoneNumberDropdown" class="form-label">Phone Number</label>
+                    @Html.DropDownList("PhoneNumber", new SelectList(Enumerable.Empty<SelectListItem>()), "-- Select Your Name First --",
+                                            new { @class = "form-select", id = "PhoneNumberDropdown", required = "required" })
+                    @Html.ValidationMessage("PhoneNumber", "", new { @class = "text-danger" })
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100 fw-bold mt-3">
+                    Adopt Now!
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var phoneNumbersMap = @Html.Raw(ViewBag.PhoneNumbersJson);
+
+        document.getElementById('FullNameDropdown').addEventListener('change', function() {
+            var fullName = this.value; 
+            var phoneNumberDropdown = document.getElementById('PhoneNumberDropdown');
+
+            phoneNumberDropdown.innerHTML = '';
+
+            if (fullName && phoneNumbersMap[fullName]) {
+                var phoneNumber = phoneNumbersMap[fullName];
+
+                var option = document.createElement('option');
+                option.value = phoneNumber;
+                option.textContent = phoneNumber;
+                option.selected = true;
+
+                phoneNumberDropdown.appendChild(option);
+            } else {
+                var defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "-- Select Your Name First --";
+                phoneNumberDropdown.appendChild(defaultOption);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var fullNameDropdown = document.getElementById('FullNameDropdown');
+            if (fullNameDropdown.value) {
+                fullNameDropdown.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+}

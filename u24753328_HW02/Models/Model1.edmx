@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="RescuePetDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ADOPTION_RECORD">
+          <Key>
+            <PropertyRef Name="AdoptionID" />
+          </Key>
+          <Property Name="AdoptionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PetID" Type="int" Nullable="false" />
+          <Property Name="PetName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="AdoptionDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DONATION">
+          <Key>
+            <PropertyRef Name="DonationID" />
+          </Key>
+          <Property Name="DonationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DonorName" Type="varchar" MaxLength="100" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="20" />
+          <Property Name="Amount" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PET">
+          <Key>
+            <PropertyRef Name="PetID" />
+          </Key>
+          <Property Name="PetID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Breed" Type="varchar" MaxLength="100" />
+          <Property Name="Location" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Age" Type="int" Nullable="false" />
+          <Property Name="Gender" Type="varchar" MaxLength="10" />
+          <Property Name="Weight" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Story" Type="varchar(max)" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="PostedBy" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ImagePath" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="USER">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FullName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <Association Name="FK__ADOPTION___PetID__3A81B327">
+          <End Role="PET" Type="Self.PET" Multiplicity="1" />
+          <End Role="ADOPTION_RECORD" Type="Self.ADOPTION_RECORD" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PET">
+              <PropertyRef Name="PetID" />
+            </Principal>
+            <Dependent Role="ADOPTION_RECORD">
+              <PropertyRef Name="PetID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RescuePetDBModelStoreContainer">
+          <EntitySet Name="ADOPTION_RECORD" EntityType="Self.ADOPTION_RECORD" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DONATION" EntityType="Self.DONATION" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PET" EntityType="Self.PET" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="USER" EntityType="Self.USER" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__ADOPTION___PetID__3A81B327" Association="Self.FK__ADOPTION___PetID__3A81B327">
+            <End Role="PET" EntitySet="PET" />
+            <End Role="ADOPTION_RECORD" EntitySet="ADOPTION_RECORD" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RescuePetDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ADOPTION_RECORD">
+          <Key>
+            <PropertyRef Name="AdoptionID" />
+          </Key>
+          <Property Name="AdoptionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PetID" Type="Int32" Nullable="false" />
+          <Property Name="PetName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AdoptionDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="PET" Relationship="Self.FK__ADOPTION___PetID__3A81B327" FromRole="ADOPTION_RECORD" ToRole="PET" />
+        </EntityType>
+        <EntityType Name="DONATION">
+          <Key>
+            <PropertyRef Name="DonationID" />
+          </Key>
+          <Property Name="DonationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DonorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PET">
+          <Key>
+            <PropertyRef Name="PetID" />
+          </Key>
+          <Property Name="PetID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Breed" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Location" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Age" Type="Int32" Nullable="false" />
+          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Weight" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Story" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PostedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ImagePath" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ADOPTION_RECORD" Relationship="Self.FK__ADOPTION___PetID__3A81B327" FromRole="PET" ToRole="ADOPTION_RECORD" />
+        </EntityType>
+        <EntityType Name="USER">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK__ADOPTION___PetID__3A81B327">
+          <End Role="PET" Type="Self.PET" Multiplicity="1" />
+          <End Role="ADOPTION_RECORD" Type="Self.ADOPTION_RECORD" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PET">
+              <PropertyRef Name="PetID" />
+            </Principal>
+            <Dependent Role="ADOPTION_RECORD">
+              <PropertyRef Name="PetID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RescuePetDBEntities2" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ADOPTION_RECORD" EntityType="Self.ADOPTION_RECORD" />
+          <EntitySet Name="DONATIONs" EntityType="Self.DONATION" />
+          <EntitySet Name="PETs" EntityType="Self.PET" />
+          <EntitySet Name="USERs" EntityType="Self.USER" />
+          <AssociationSet Name="FK__ADOPTION___PetID__3A81B327" Association="Self.FK__ADOPTION___PetID__3A81B327">
+            <End Role="PET" EntitySet="PETs" />
+            <End Role="ADOPTION_RECORD" EntitySet="ADOPTION_RECORD" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RescuePetDBModelStoreContainer" CdmEntityContainer="RescuePetDBEntities2">
+          <EntitySetMapping Name="ADOPTION_RECORD">
+            <EntityTypeMapping TypeName="RescuePetDBModel.ADOPTION_RECORD">
+              <MappingFragment StoreEntitySet="ADOPTION_RECORD">
+                <ScalarProperty Name="AdoptionID" ColumnName="AdoptionID" />
+                <ScalarProperty Name="PetID" ColumnName="PetID" />
+                <ScalarProperty Name="PetName" ColumnName="PetName" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AdoptionDate" ColumnName="AdoptionDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DONATIONs">
+            <EntityTypeMapping TypeName="RescuePetDBModel.DONATION">
+              <MappingFragment StoreEntitySet="DONATION">
+                <ScalarProperty Name="DonationID" ColumnName="DonationID" />
+                <ScalarProperty Name="DonorName" ColumnName="DonorName" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PETs">
+            <EntityTypeMapping TypeName="RescuePetDBModel.PET">
+              <MappingFragment StoreEntitySet="PET">
+                <ScalarProperty Name="PetID" ColumnName="PetID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Breed" ColumnName="Breed" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Story" ColumnName="Story" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PostedBy" ColumnName="PostedBy" />
+                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="USERs">
+            <EntityTypeMapping TypeName="RescuePetDBModel.USER">
+              <MappingFragment StoreEntitySet="USER">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

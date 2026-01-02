@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                <img src="@Url.Content("~/Images/logo.png")" alt="RescuePet Logo" style="height: 30px;" class="me-2" />
+                <span class="fw-bold text-dark">RescuePet</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <ul class="navbar-nav flex-grow-1 justify-content-end">
+                    <li class="nav-item">
+                        @Html.ActionLink("Pets", "Index", "Pets", new { area = "" }, new { @class = "nav-link text-dark fw-bold" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Post a Pet?", "Index", "PostPet", new { area = "" }, new { @class = "nav-link text-dark fw-bold" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Donations", "Index", "Donations", new { area = "" }, new { @class = "nav-link text-dark fw-bold" })
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

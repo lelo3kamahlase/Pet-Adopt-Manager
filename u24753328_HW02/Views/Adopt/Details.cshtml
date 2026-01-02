@@ -1,0 +1,118 @@
+﻿
+@model u24753328_HW02.Models.PET
+
+@{
+    ViewBag.Title = $"Adopt {Model.Name}";
+}
+
+@* Check if the pet was found *@
+@if (Model == null)
+{
+    <div class="alert alert-danger text-center mt-5">
+        Pet not found or has already been adopted!
+    </div>
+}
+else
+{
+    <div class="container py-5">
+        <div class="row">
+
+            @* --- Pet Details Column --- *@
+            <div class="col-md-6">
+                <h1 class="display-4 text-primary">Hi, I'm @Model.Name!</h1>
+                <h2 class="lead mb-4">I'm looking for my dream home!</h2>
+
+                <div class="text-muted mb-4">
+                    <span class="me-3"><i class="bi bi-geo-alt-fill"></i> @Model.Location</span>
+                    <span class="me-3"><i class="bi bi-clock-fill"></i> Age @Model.Age</span>
+                    <span class="me-3"><i class="bi bi-speedometer2"></i> @Model.Weight kg</span>
+                    <span class="me-3"><i class="bi bi-gender-@Model.Gender.ToLower()"></i> @Model.Gender</span>
+                    <span class="badge bg-@(@Model.Status == "Available" ? "warning text-dark" : "success")">@Model.Status</span>
+                </div>
+
+                @* --- Story --- *@
+                <h3 class="mt-4 text-secondary">My Story</h3>
+                <p class="text-muted">
+                    @Model.Story
+                </p>
+
+                @* --- Adoption Form --- *@
+                @using (Html.BeginForm("AdoptNow", "Adopt", FormMethod.Post, new { @class = "row g-3 mt-4" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.PetID)
+                    @Html.HiddenFor(model => model.Name)
+
+                    <h3 class="col-12 text-secondary border-top pt-3">Your Details</h3>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger col-12" })
+
+                    @* 1. Full Name Dropdown (Binds UserName string) *@
+                    <div class="col-md-6">
+                        @Html.Label("UserName", "Full Name", new { @class = "form-label" })
+                        @Html.DropDownList("UserName", (SelectList)ViewBag.FullNameList, "-- Select Your Name --",
+                                            new { @class = "form-select", id = "fullNameDropdown", required = "required" })
+                        @Html.ValidationMessage("UserName", "", new { @class = "text-danger" })
+                    </div>
+
+                    @* 2. Phone Number Dropdown (Binds PhoneNumber string) - Value is set by JS *@
+                    <div class="col-md-6">
+                        <label for="phoneNumberDropdown" class="form-label">Phone Number</label>
+                        <select id="phoneNumberDropdown" name="PhoneNumber" class="form-select" required>
+                            <option value="">-- Select Your Name First --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
+                            Adopt Now!
+                        </button>
+                    </div>
+                }
+            </div>
+
+            @* --- Image Column --- *@
+            <div class="col-md-6 d-flex justify-content-center align-items-start">
+                <img src="@Url.Content(Model.ImagePath)" alt="Picture of @Model.Name" class="img-fluid rounded shadow-lg" style="max-height: 500px; object-fit: contain;" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        // Load the JSON map of FullName to PhoneNumber
+        var phoneNumbersMap = @Html.Raw(ViewBag.PhoneNumbersJson);
+
+        document.getElementById('fullNameDropdown').addEventListener('change', function() {
+            var fullName = this.value;
+            var phoneNumberDropdown = document.getElementById('phoneNumberDropdown');
+
+            phoneNumberDropdown.innerHTML = '';
+
+            if (fullName && phoneNumbersMap[fullName]) {
+                var phoneNumber = phoneNumbersMap[fullName];
+
+                var option = document.createElement('option');
+                option.value = phoneNumber;
+                option.textContent = phoneNumber;
+                option.selected = true;
+
+                phoneNumberDropdown.appendChild(option);
+            } else {
+                
+                var defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "-- Select Your Name First --";
+                phoneNumberDropdown.appendChild(defaultOption);
+            }
+        });
+
+     
+        document.addEventListener('DOMContentLoaded', function() {
+            var fullNameDropdown = document.getElementById('fullNameDropdown');
+            if (fullNameDropdown.value) {
+                fullNameDropdown.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+}

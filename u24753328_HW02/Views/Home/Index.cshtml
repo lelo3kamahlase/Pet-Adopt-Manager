@@ -1,0 +1,39 @@
+﻿@model IEnumerable<u24753328_HW02.Models.ADOPTION_RECORD>
+
+@{
+    ViewBag.Title = "Home";
+}
+
+<div class="text-center py-2">
+    <h1 class="display-1 text-primary">Adopt Love, Foster Happiness.</h1>
+    <div class="row mt-5">
+
+        @* Left Column: Adoption List and Count *@
+        <div class="col-md-6 border-end">
+            <h2 class="text-warning">Pets Homed @ViewBag.PetsHomedCount</h2>
+            <div class="card p-3 mx-auto mt-3" style="max-width: 400px;">
+                <h5 class="card-title text-start text-secondary mb-3">Recently Adopted</h5>
+                <ul class="list-unstyled text-start small">
+                    @if (Model.Any())
+                    {
+                        foreach (var record in Model)
+                        {
+                            <li><i class="bi bi-heart-fill text-danger me-2"></i> @record.PetName was adopted by @record.UserName</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No recent adoptions to display.</li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        @* Right Column: Image and Action Button *@
+        <div class="col-md-6">
+            <img src="~/Images/basset_hound.png" alt="Happy Basset Hound" class="img-fluid" style="max-height: 300px;" />
+            <p class="mt-4 lead text-muted">With a focus on matching the right pet with the right family, RescuePet makes it easy to adopt love and foster happiness.</p>
+            <a href="@Url.Action("Index", "Pets")" class="btn btn-warning btn-lg fw-bold mt-3">VIEW PETS</a>
+        </div>
+    </div>
+</div>

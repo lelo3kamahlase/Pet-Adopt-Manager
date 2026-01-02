@@ -1,0 +1,138 @@
+﻿@model IEnumerable<u24753328_HW02.Models.PET>
+
+@{
+    ViewBag.Title = "Adoptable Pets";
+}
+
+
+<h2 class="mb-4">Pets Available for Adoption</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage as string))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> @ViewBag.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@* Filtering Form *@
+@using (Html.BeginForm("Index", "Pets", FormMethod.Get, new { @class = "row g-3 mb-5 p-4 border rounded bg-light shadow-sm" }))
+{
+    <div class="col-md-3">
+        <label for="type" class="form-label fw-bold">Type</label>
+        @Html.DropDownList("type", (SelectList)ViewBag.Types, "All", new { @class = "form-select", id = "typeDropdown" })
+    </div>
+    <div class="col-md-3">
+        <label for="breed" class="form-label fw-bold">Breed</label>
+        @Html.DropDownList("breed", (SelectList)ViewBag.Breeds, "All", new { @class = "form-select", id = "breedDropdown" })
+    </div>
+    <div class="col-md-3">
+        <label for="location" class="form-label fw-bold">Location</label>
+        @Html.DropDownList("location", (SelectList)ViewBag.Locations, "All", new { @class = "form-select" })
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary me-2 w-50">Search</button>
+        @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-outline-secondary w-50" })
+    </div>
+}
+
+@* Pet Cards *@
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    @if (Model.Any())
+    {
+        foreach (var pet in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    @{
+                        string imagePath = string.IsNullOrEmpty(pet.ImagePath)
+                                         ? "~/Images/Defaults/no_image.png" 
+                                         : pet.ImagePath;
+                    }
+
+                    <img class="card-img-top"
+                         src="@Url.Content(imagePath)"
+                         alt="@pet.Name"
+                         style="height: 200px; object-fit: cover;" />
+
+                    <div class="card-body">
+                        @* STATUS BADGE *@
+                        <span class="badge @(pet.Status == "Adopted" ? "bg-danger" : "bg-success") float-end">@pet.Status</span>
+                        <h5 class="card-title">@pet.Name</h5>
+
+                        @* DETAILS *@
+                        <p class="card-text small text-muted">
+                            @pet.Location, @pet.Gender<br />
+                            Age: @pet.Age, Wt: @pet.Weight kg
+                        </p>
+
+                        @* STORY *@
+                        <p class="card-text" style="font-size: 0.9rem;">
+                            Story: @pet.Story.Substring(0, Math.Min(pet.Story.Length, 300))@(pet.Story.Length > 100 ? "" : "")
+                        </p>
+                    </div>
+
+                    @* BUTTON/ADOPTED STATUS *@
+                    <div class="mt-auto">
+                        @if (pet.Status == "Available")
+                        {
+                            <a href="@Url.Action("Details", "Adopt", new { id = pet.PetID })" class="btn btn-info w-100 fw-bold">
+                                View
+                            </a>
+                        }
+                        else if (pet.Status == "Adopted")
+                        {
+                            <div class="text-center p-2 bg-success text-white rounded fw-bold">
+                                ADOPTED! 🏠
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center p-2 bg-secondary text-white rounded fw-bold">
+                                Status: @pet.Status
+                            </div>
+                        }
+                    </div>
+                    <small class="text-muted d-block mt-2 px-3 pb-3">Posted by <strong>@pet.PostedBy</strong></small>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-info text-center" role="alert">
+                No pets match the current filters. Try adjusting your search!
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#typeDropdown').change(function () {
+                var selectedType = $(this).val();
+                var breedDropdown = $('#breedDropdown');
+                var allOption = breedDropdown.find('option[value="All"]');
+                if (allOption.length === 0) {
+                    allOption = $('<option value="All">All</option>');
+                }
+                breedDropdown.empty().append(allOption);
+
+                if (selectedType && selectedType !== 'All') {
+                    $.getJSON('@Url.Action("GetBreedsByType", "Pets")', { type: selectedType }, function (breeds) {
+                        $.each(breeds, function (index, breed) {
+                            breedDropdown.append($('<option></option>').val(breed).text(breed));
+                        });
+                        var currentBreed = '@ViewBag.SelectedBreed';
+                        if (currentBreed && breedDropdown.find('option[value="' + currentBreed + '"]').length) {
+                            breedDropdown.val(currentBreed);
+                        }
+                    });
+                }
+            }).trigger('change');
+        });
+    </script>
+}

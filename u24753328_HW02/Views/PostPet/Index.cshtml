@@ -1,0 +1,156 @@
+﻿@model u24753328_HW02.Models.PET
+
+@{
+    ViewBag.Title = "Post a Pet for Adoption";
+}
+
+<div class="container py-1">
+    <h2 class="display-4 mb-1 text-center text-primary">Post a Pet for Adoption</h2>
+    <p class="text-center text-muted mb-3">Please fill out all details accurately to help find a loving home quickly.</p>
+    @using (Html.BeginForm("Index", "PostPet", FormMethod.Post, new { @class = "row g-4", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger col-12" })
+
+        <div class="col-md-4 border-end pe-md-4">
+            <h4 class="mb-4 text-secondary">Your Details</h4>
+
+            @* 1. Full Name Dropdown *@
+            <div class="mb-3">
+                @Html.LabelFor(model => model.PostedBy, "Your Full Name", new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.PostedBy, (SelectList)ViewBag.FullNameList, "-- Select Your Name --",
+                                                 new { @class = "form-select", id = "fullNameDropdown", required = "required" })
+                @Html.ValidationMessageFor(model => model.PostedBy, "", new { @class = "text-danger" })
+            </div>
+
+            @* 2. Phone Number Dropdown Value is set by JS *@
+            <div class="mb-3">
+                <label for="phoneNumberDropdown" class="form-label">Phone Number</label>
+                <select id="phoneNumberDropdown" name="PhoneNumber" class="form-select" required>
+                    <option value="">-- Select Your Name First --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Story, "Pet's Story", new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.Story, 3, 8, new { @class = "form-control", placeholder = "Tell us about the pet...", required = "required" })
+                @Html.ValidationMessageFor(model => model.Story, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-md-4 border-end px-md-4">
+            <h4 class="mb-4 text-secondary">Pet Details</h4>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Name, "Pet Name", new { @class = "form-label" })
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g., Buddy", required = "required" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Type, "Type", new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.Type, (SelectList)ViewBag.TypeList, "-- Select Type --", new { @class = "form-select", required = "required" })
+                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Breed, "Breed", new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.Breed, (SelectList)ViewBag.BreedList, "-- Select Breed --", new { @class = "form-select", required = "required" })
+                @Html.ValidationMessageFor(model => model.Breed, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Location, "Location (City)", new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.Location, (SelectList)ViewBag.LocationList, "-- Select Location --", new { @class = "form-select", required = "required" })
+                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-md-4 ps-md-4">
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Age, "Age (Years)", new { @class = "form-label" })
+                @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control", type = "number", min = "0", placeholder = "e.g., 2", required = "required" } })
+                @Html.ValidationMessageFor(model => model.Age, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Weight, "Weight (kg)", new { @class = "form-label" })
+                @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01", min = "0", placeholder = "e.g., 15.5", required = "required" } })
+                @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Gender, "Gender", new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.Gender, (SelectList)ViewBag.GenderList, "-- Select Gender --", new { @class = "form-select", required = "required" })
+                @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+            </div>
+
+            @* FIX: Image Path/Upload Field *@
+            <div class="mb-3">
+                @Html.LabelFor(model => model.ImagePath, "Image Path", new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.TextBoxFor(model => model.ImagePath, new { @class = "form-control rounded-start", placeholder = "Select an image file...", id = "imageUrlInput", @readonly = "readonly" })
+                    <label class="input-group-text btn btn-secondary text-white fw-bold" for="imageUpload">
+                        <i class="bi bi-upload me-2"></i> Upload
+                    </label>
+                    <input type="file" name="PetImageFile" id="imageUpload" class="d-none" accept="image/*" /> 
+                </div>
+                @Html.ValidationMessageFor(model => model.ImagePath, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+
+        <div class="col-12 mt-5">
+            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">
+                Post Pet
+            </button>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var phoneNumbersMap = @Html.Raw(ViewBag.PhoneNumbersJson);
+
+        // --- Dependent Dropdown ---
+        document.getElementById('fullNameDropdown').addEventListener('change', function() {
+            var fullName = this.value;
+            var phoneNumberDropdown = document.getElementById('phoneNumberDropdown');
+
+            phoneNumberDropdown.innerHTML = '';
+
+            if (fullName && phoneNumbersMap[fullName]) {
+                var phoneNumber = phoneNumbersMap[fullName];
+                var option = document.createElement('option');
+                option.value = phoneNumber;
+                option.textContent = phoneNumber;
+                option.selected = true;
+                phoneNumberDropdown.appendChild(option);
+            } else {
+                var defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "-- Select Your Name First --";
+                phoneNumberDropdown.appendChild(defaultOption);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var fullNameDropdown = document.getElementById('fullNameDropdown');
+            if (fullNameDropdown.value) {
+                fullNameDropdown.dispatchEvent(new Event('change'));
+            }
+            // --- Image Upload ---
+            const fileInput = document.getElementById('imageUpload');
+            const imageUrlInput = document.getElementById('imageUrlInput');
+
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    imageUrlInput.value = this.files[0].name;
+                } else {
+                    imageUrlInput.value = '';
+                }
+            });
+        });
+    </script>
+}

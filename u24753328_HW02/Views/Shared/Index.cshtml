@@ -1,0 +1,152 @@
+﻿@model u24753328_HW02.Models.DONATION
+
+@{
+    ViewData["Title"] = "Donations";
+
+    // Convert ViewBag items for use in logic
+    decimal goal = (decimal)(ViewBag.Goal ?? 0m);
+    decimal totalRaised = (decimal)(ViewBag.TotalRaised ?? 0m);
+
+    // This variable (e.g., 36) is what sets the bar width and text
+    int percentage = Math.Min(100, (int)(ViewBag.Percentage ?? 0));
+    bool isGoalReached = totalRaised >= goal;
+}
+
+<h2 class="mt-3">Support Our Cause</h2>
+<p class="lead">Your contribution helps us save more lives and find pets their forever homes.</p>
+
+@* GOAL PROGRESS BAR *@
+<div class="row mb-5">
+    <div class="col-12">
+        <h4 class="mb-3">Progress Towards Goal </h4>
+
+        @* Alert for Goal Reached *@
+        @if (isGoalReached)
+        {
+            <div class="alert alert-success fw-bold text-center" role="alert">
+                🎉 GOAL REACHED! Thank you for your incredible generosity! 🎉
+            </div>
+        }
+        <div class="progress" style="height: 30px;">
+            <div class="progress-bar progress-bar-striped @(isGoalReached ? "bg-success" : "bg-info")"
+                 role="progressbar"
+                 style="width: @(percentage)%" @* Uses the true calculated percentage (e.g., 36%) *@
+                 aria-valuenow="@percentage"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+                @percentage% Raised
+            </div>
+        </div>
+        @* Assumed Goal Display based on your image *@
+        <p class="text-end mt-2 fw-bold mb-3">R100 000</p>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-6">
+        @* Display Success Message *@
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> @ViewBag.Message
+            </div>
+        }
+
+        @using (Html.BeginForm("SubmitDonation", "Donations", FormMethod.Post, new { @class = "p-4 border rounded shadow-sm bg-light" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @* The phone number will be submitted by this input, which JavaScript updates. *@
+            <input type="hidden" name="PhoneNumber" id="PhoneNumberHidden" />
+
+            @* 1. Full Name Dropdown *@
+            <div class="mb-3">
+                <label for="DonorName" class="form-label">Full Name</label>
+                @Html.DropDownList("DonorName", (SelectList)ViewBag.DonorList, "-- Select Donor --", new { @class = "form-select", @id = "DonorName", required = "required" })
+            </div>
+
+
+            @* 2. Phone Number Dropdown (DISABLED as requested) *@
+            <div class="mb-3">
+                <label for="PhoneNumberDisplay" class="form-label">Phone Number (Disabled)</label>
+                <select id="PhoneNumberDisplay" class="form-select" disabled>
+                    @* 🛑 DISABLED ADDED 🛑 *@
+                    <option value="">-- Select Name First --</option>
+                </select>
+            </div>
+
+            <hr />
+
+            @* 3. Donation Amount Input *@
+            <div class="mb-3">
+                <label for="Amount" class="form-label">Donation Amount (Rands)</label>
+                @Html.TextBoxFor(model => model.Amount, new { type = "number", min = "10", step = "0.01", @class = "form-control form-control-lg", placeholder = "e.g., 100.00", required = "required" })
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-lg btn-warning w-100 fw-bold">Donate Now</button>
+        } @* End of Html.BeginForm *@
+
+    </div>
+    <div class="col-md-6 text-center">
+        <h3 class="text-warning mt-4 mt-md-0">Why Donate?</h3>
+        <p class="pt-2 text-muted">All donations go directly to food, medical care, and shelter for pets awaiting adoption. Every Rand makes a difference in giving these animals a second chance!</p>
+        <img src="~/Images/basset_hound.png" alt="Paw Print Heart" class="img-fluid mt-3" style="max-width: 250px;" />
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+    // CRITICAL: Ensure this variable gets the JSON data from the controller.
+    var phoneNumbersMap = @Html.Raw(ViewBag.PhoneNumbersJson);
+
+    function updatePhoneNumber() {
+        var fullNameDropdown = document.getElementById('DonorName');
+        var phoneNumberDropdown = document.getElementById('PhoneNumberDisplay');
+        var phoneHidden = document.getElementById('PhoneNumberHidden');
+
+        var fullName = fullNameDropdown.value;
+
+        phoneNumberDropdown.innerHTML = '';
+        phoneHidden.value = '';
+
+        // Check if a valid name is selected and present in the map
+        if (fullName && fullName !== "-- Select Donor --" && phoneNumbersMap.hasOwnProperty(fullName)) {
+
+            var phoneNumber = phoneNumbersMap[fullName];
+
+            // 1. Update the visible dropdown
+            var option = document.createElement('option');
+            option.value = phoneNumber;
+            option.textContent = phoneNumber;
+            option.selected = true;
+            phoneNumberDropdown.appendChild(option);
+
+            // 2. Update the hidden input for submission
+            phoneHidden.value = phoneNumber;
+
+        } else {
+            // Display the default prompt
+            var defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "-- Select Name First --";
+            defaultOption.selected = true;
+            phoneNumberDropdown.appendChild(defaultOption);
+        }
+    }
+
+    // Attach the event listener on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        var fullNameDropdown = document.getElementById('DonorName');
+
+        // Attach the function to the 'change' event
+        fullNameDropdown.addEventListener('change', updatePhoneNumber);
+
+        // Trigger on load
+        if (fullNameDropdown.value && fullNameDropdown.value !== "") {
+            updatePhoneNumber();
+        }
+    });
+    </script>
+}
